@@ -75,9 +75,29 @@ public class MongodbDriver  implements  Runnable{
             tableInfo.put("table",result.getNamespace().getCollectionName());
             tableInfo.put("db",result.getNamespace().getDatabaseName());
             switch (result.getOperationType().getValue()){
-                case "insert" : watcherInterface.insert(result.getFullDocument().toString(),tableInfo);break;
-                case "delete" : watcherInterface.delete(result.getDocumentKey().toString(),tableInfo);break;
-                case "update" : watcherInterface.updata(result.getUpdateDescription().toString(),tableInfo);break;
+                case "insert" :
+                    try {
+                        watcherInterface.insert(result.getFullDocument().toString(),tableInfo);
+                        break;
+                    }catch (Exception e){
+                        System.out.println("Insert Exception :"+ e.getMessage());
+                    }
+                case "delete" :
+                    try{
+                        watcherInterface.delete(result.getDocumentKey().toString(),tableInfo);
+                        break;
+                    }catch (Exception e1){
+                        System.out.println("Delete Exception :" + e1.getMessage());
+                    }
+
+                case "update" :
+                    try {
+                        watcherInterface.updata(result.getUpdateDescription().toString(),tableInfo);
+                        break;
+                    }catch (Exception e){
+                        System.out.println("update Exception :" + e.getMessage());
+                    }
+
                 default:
                     System.out.println("Null");
             }
