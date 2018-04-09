@@ -70,10 +70,17 @@ public class MongodbDriver  implements  Runnable{
         );
         MongoCursor tsFind = coll.watch(filter).iterator();
         while(tsFind.hasNext()){
-            ChangeStreamDocument result =  (ChangeStreamDocument) (tsFind.next());
-            System.out.println("db.table:" +result.getNamespace());
-            System.out.println("FullData:" +result.getFullDocument());
-            System.out.println("action:" +result.getOperationType());
+            ChangeStreamDocument result = (ChangeStreamDocument) (tsFind.next());
+            JSONObject tableInfo = new JSONObject();
+            tableInfo.put("table",result.getNamespace().getCollectionName());
+            tableInfo.put("db",result.getNamespace().getDatabaseName());
+            switch (result.getOperationType().getValue()){
+                case "insert" : watcherInterface.insert(result.getFullDocument().toString(),tableInfo);break;
+                case "delete" : watcherInterface.delete(result.getDocumentKey().toString(),tableInfo);break;
+                case "update" : watcherInterface.updata(result.getUpdateDescription().toString(),tableInfo);break;
+                default:
+                    System.out.println("Null");
+            }
         }
     }
 
@@ -102,21 +109,24 @@ public class MongodbDriver  implements  Runnable{
             binary.acquire();
             d.watchOplog(new watcherInterface() {
                 @Override
-                public int insert(JSONObject inJson,JSONObject dbTable) {
+                public int insert(String inJson,JSONObject dbTable) {
+                    System.out.println("insert");
                     System.out.println(inJson);
                     System.out.println(dbTable);
                     return 0;
                 }
 
                 @Override
-                public int delete(JSONObject inJson,JSONObject dbTable) {
+                public int delete(String inJson,JSONObject dbTable) {
+                    System.out.println("delete");
                     System.out.println(inJson);
                     System.out.println(dbTable);
                     return 0;
                 }
 
                 @Override
-                public int updata(JSONObject inJson,JSONObject dbTable) {
+                public int updata(String inJson,JSONObject dbTable) {
+                    System.out.println("updata");
                     System.out.println(inJson);
                     System.out.println(dbTable);
                     return 0;

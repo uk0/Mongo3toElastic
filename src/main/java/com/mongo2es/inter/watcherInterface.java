@@ -9,8 +9,8 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface watcherInterface {
 
-    int insert(JSONObject inData, JSONObject dbTable);
-    int delete(JSONObject inData, JSONObject dbTable);
-    int updata(JSONObject inData, JSONObject dbTable);
+    int insert(String inData, JSONObject dbTable);
+    int delete(String inData, JSONObject dbTable);
+    int updata(String inData, JSONObject dbTable);
 
 }
